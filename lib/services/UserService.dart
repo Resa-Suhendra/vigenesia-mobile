@@ -7,8 +7,8 @@ import '../model/UserModel.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  // static const base_url = 'http://192.168.1.8/vigenesia/api';
-  static const base_url = 'https://vigenesia.org/api';
+  static const base_url = 'http://192.168.1.15/vigenesia/api';
+  // static const base_url = 'https://vigenesia.org/api';
 
   static FutureOr<String?> register(Map<String, dynamic> user) async {
     const String url = '${base_url}/registrasi';
@@ -46,6 +46,54 @@ class UserService {
         LoginResponseModel loginResponseModel =
         LoginResponseModel.fromJson(json.decode(response.body));
         return loginResponseModel.data;
+      } else {
+        print('Failed to submit form. Status code: ${response.statusCode}');
+        return null;
+      }
+    } catch (error) {
+      print('Error submitting form: $error');
+      return null;
+    }
+  }
+
+  static Future<bool> editProfile(UserModel userModel) async {
+    const String url = '${base_url}/putprofile';
+
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        body: userModel.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        print('Form submitted successfully');
+        print(response.body.toString());
+        return true;
+      } else {
+        print('Failed to submit form. Status code: ${response.statusCode}');
+        return false;
+      }
+    } catch (error) {
+      print('Error submitting form: $error');
+      return false;
+    }
+
+  }
+
+  static Future<UserModel?> getUserById(String userid) async {
+     final String url = '${base_url}/user?iduser=$userid';
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+      );
+
+      if (response.statusCode == 200) {
+        print('Form submitted successfully');
+        print(response.body.toString());
+        List<dynamic> data = json.decode(response.body);
+        UserModel userModel = data.map((e) => UserModel.fromJson(e)).first;
+        return userModel;
       } else {
         print('Failed to submit form. Status code: ${response.statusCode}');
         return null;

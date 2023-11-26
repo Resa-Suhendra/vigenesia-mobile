@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vigenesia/model/UserModel.dart';
 import 'package:vigenesia/services/UserService.dart';
@@ -14,8 +15,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController(text: "anj@anj.com");
+  final TextEditingController _passwordController = TextEditingController(text: "1111");
 
   bool _isPasswordInVisible = true;
 
@@ -145,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
+      EasyLoading.show(status: 'loading...');
 
       Map<String, dynamic> param = {
         'email': _emailController.text,
@@ -153,14 +155,18 @@ class _LoginPageState extends State<LoginPage> {
       UserModel? result = await UserService.login(param);
 
       if (result != null) {
+        EasyLoading.dismiss();
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => HomePage(
+              userModel: result,
+            ),
           ),
           (route) => false,
         );
       } else {
+        EasyLoading.dismiss();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Email or password is wrong'),

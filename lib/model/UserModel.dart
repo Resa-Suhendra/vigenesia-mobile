@@ -2,10 +2,10 @@ import 'dart:convert';
 
 class UserModel {
   String? iduser;
-  String nama;
+  String nama = "User";
   String profesi;
   String email;
-  String password;
+  String? password;
   String? roleId;
   String? isActive;
   DateTime? tanggalInput;
@@ -16,7 +16,7 @@ class UserModel {
     required this.nama,
     required this.profesi,
     required this.email,
-    required this.password,
+    this.password,
     this.roleId,
     this.isActive,
     this.tanggalInput,
